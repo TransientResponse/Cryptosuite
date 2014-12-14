@@ -2,12 +2,25 @@
 #define Sha256_h
 
 #include <string.h>
+#include "part.h"
 
-#define memcpy_P memcpy
-#undef PROGMEM
-//#define PROGMEM __attribute__(( section(".progmem.data") ))
-#define PROGMEM
-#define pgm_read_dword(p) (*(p))
+#if  (defined(__linux) || defined(linux)) || defined(__ARDUINO_X86__) || defined(__TM4C1294NCPDT__)
+	#define memcpy_P memcpy
+	#undef PROGMEM
+	#ifndef __TM4C1294NCPDT__
+		#define PROGMEM __attribute__((section(".progmem.data")))
+	#else
+		#define PROGMEM 
+	#endif
+	#define pgm_read_dword(p) (*(p))
+	#if defined(__ARDUINO_X86__) || defined(__TM4C1294NCPDT__)
+		#include "Print.h"
+	#endif
+#else
+	#include <avr/io.h>
+	#include <avr/pgmspace.h>
+	#include "Print.h"
+#endif
 #include "Print.h"
 
 
