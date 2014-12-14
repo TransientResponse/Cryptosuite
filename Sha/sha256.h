@@ -2,7 +2,10 @@
 #define Sha256_h
 
 #include <string.h>
-#include "part.h"
+
+#if !defined(__linux) || !defined(linux)
+	#include "Arduino.h" //To bring in part.h for Energia
+#endif
 
 #if  (defined(__linux) || defined(linux)) || defined(__ARDUINO_X86__) || defined(__TM4C1294NCPDT__)
 	#define memcpy_P memcpy
@@ -10,7 +13,7 @@
 	#ifndef __TM4C1294NCPDT__
 		#define PROGMEM __attribute__((section(".progmem.data")))
 	#else
-		#define PROGMEM 
+		#define PROGMEM __attribute__((section("flash")))
 	#endif
 	#define pgm_read_dword(p) (*(p))
 	#if defined(__ARDUINO_X86__) || defined(__TM4C1294NCPDT__)
@@ -21,8 +24,6 @@
 	#include <avr/pgmspace.h>
 	#include "Print.h"
 #endif
-#include "Print.h"
-
 
 #include <inttypes.h>
 
