@@ -13,7 +13,7 @@
 	#ifndef __TM4C1294NCPDT__
 		#define PROGMEM __attribute__((section(".progmem.data")))
 	#else
-		#define PROGMEM __attribute__((section("flash")))
+		#define PROGMEM __attribute__((section(".text")))
 	#endif
 	#define pgm_read_dword(p) (*(p))
 	#if defined(__ARDUINO_X86__) || defined(__TM4C1294NCPDT__)
@@ -41,7 +41,7 @@ union _state
 	uint32_t w[HASH_LENGTH / 4];
 };
 
-#if  (defined(__linux) || defined(linux)) && !defined(__ARDUINO_X86__)
+#if  (defined(__linux) || defined(linux)) && !defined(__ARDUINO_X86__) && !defined(__TM4C1294NCPDT__)
 class Sha256Class
 #else
 class Sha256Class : public Print
@@ -52,7 +52,7 @@ public:
 	void initHmac(const uint8_t* secret, int secretLength);
 	uint8_t* result(void);
 	uint8_t* resultHmac(void);
-#if  (defined(__linux) || defined(linux)) && !defined(__ARDUINO_X86__)
+#if  (defined(__linux) || defined(linux)) && !defined(__ARDUINO_X86__) && !defined(__TM4C1294NCPDT__)
 	virtual size_t write(uint8_t);
 	size_t write_L(const char *str);
 	size_t write_L(const uint8_t *buffer, size_t size);
