@@ -50,8 +50,8 @@ class Sha256Class : public Print
 public:
 	void init(void);
 	void initHmac(const uint8_t* secret, int secretLength);
-	uint8_t* result(void);
-	uint8_t* resultHmac(void);
+	void result(uint8_t*);
+	void resultHmac(uint8_t*);
 #if  (defined(__linux) || defined(linux)) && !defined(__ARDUINO_X86__) && !defined(__TM4C1294NCPDT__)
 	virtual size_t write(uint8_t);
 	size_t write_L(const char *str);

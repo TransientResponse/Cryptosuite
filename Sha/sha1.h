@@ -2,14 +2,23 @@
 #define Sha1_h
 
 #include <string.h>
-#if  (defined(__linux) || defined(linux)) || defined(__ARDUINO_X86__)
+
+#if !defined(__linux) || !defined(linux)
+	#include "Arduino.h" //To bring in part.h for Energia
+#endif
+
+#if  (defined(__linux) || defined(linux)) || defined(__ARDUINO_X86__) || defined(__TM4C1294NCPDT__)
 	#define memcpy_P memcpy
 	#undef PROGMEM
-	#define PROGMEM __attribute__(( section(".progmem.data") ))
+	#ifndef __TM4C1294NCPDT__
+		#define PROGMEM __attribute__((section(".progmem.data")))
+	#else
+		#define PROGMEM __attribute__((section(".text")))
+	#endif
 	#define pgm_read_dword(p) (*(p))
-	#if defined(__ARDUINO_X86__)
+	#if defined(__ARDUINO_X86__) || defined(__TM4C1294NCPDT__)
 		#include "Print.h"
-	#endif	
+	#endif
 #else
 	#include <avr/io.h>
 	#include <avr/pgmspace.h>
@@ -38,8 +47,8 @@ class Sha1Class : public Print
   public:
     void init(void);
     void initHmac(const uint8_t* secret, int secretLength);
-    uint8_t* result(void);
-    uint8_t* resultHmac(void);
+    void result(uint8_t*);
+    void resultHmac(uint8_t*);
     #if  (defined(__linux) || defined(linux)) && !defined(__ARDUINO_X86__)
 	virtual size_t write(uint8_t);
 	size_t write_L(const char *str);

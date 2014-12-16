@@ -109,7 +109,7 @@ void Sha256Class::pad() {
 }
 
 
-uint8_t* Sha256Class::result(void) {
+void Sha256Class::result(uint8_t* out) {
   // Pad to complete the last block
   pad();
   
@@ -124,8 +124,8 @@ uint8_t* Sha256Class::result(void) {
     state.w[i]=b;
   }
   
-  // Return pointer to hash (20 characters)
-  return state.b;
+  // Copy hash result to output buffer
+  memcpy(out, state.b, HASH_LENGTH);
 }
 
 #define HMAC_IPAD 0x36
@@ -153,7 +153,8 @@ void Sha256Class::initHmac(const uint8_t* key, int keyLength) {
   }
 }
 
-uint8_t* Sha256Class::resultHmac(void) {
+void Sha256Class::resultHmac(uint8_t* out)
+{
   uint8_t i;
   // Complete inner hash
   memcpy(innerHash,result(),HASH_LENGTH);
@@ -161,8 +162,10 @@ uint8_t* Sha256Class::resultHmac(void) {
   init();
   for (i=0; i<BLOCK_LENGTH; i++) write(keyBuffer[i] ^ HMAC_OPAD);
   for (i=0; i<HASH_LENGTH; i++) write(innerHash[i]);
-  return result();
+  
+  memcpy(out, state.b, HASH_LENGTH);
 }
+
 #if (defined(__linux) || defined(linux)) && !defined(__ARDUINO_X86__)
 	size_t Sha256Class::write_L(const char *str){
 		if (str == NULL) return 0;
